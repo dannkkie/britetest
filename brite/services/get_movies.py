@@ -1,43 +1,45 @@
 import os
 import requests
+from sqlalchemy.exc import OperationalError
 
-from ..database_setup import db
-from ..models.movie import Movie
+
+from brite.utils.database_setup import db
+from brite.models.movie import Movie
+
+
+def fetch_movies(page, api_key):
+    url = f'http://www.omdbapi.com/?s=movie&page={page}&apikey={api_key}'
+    response = requests.get(url)
+    return response.json()
+
+
+def create_movie(item):
+    return Movie(
+        title=item['Title'],
+        year=item['Year'],
+        id=item['imdbID'],
+        type=item['Type'],
+        poster=item['Poster']
+    )
+
 
 def get_movies():
-    """
-    Retrieves a list of movies from an external API and stores them in the database.
-
-    This function makes a request to the OMDB API to retrieve a list of movies. It
-    uses a loop to paginate through the API's results and retrieves movies from
-    multiple pages. Each movie is then added to the database using the SQLAlchemy
-    ORM. Finally, the changes are committed to the database. The request is done once if the db is empty
-
-    """
-
-    if Movie.query.first() is None:
-        api_key = os.getenv('API_KEY')
-        if api_key is None:
-            print("Set the API_KEY environment variable")
+    try:
+        if Movie.query.first() is not None:
+            print("Movies already exist in the table.")
             return
 
+        api_key = os.getenv('API_KEY')
+        assert api_key is not None, "Set the API_KEY environment variable"
+
         movies = []
-        for i in range(1, 11):
-            url = f'http://www.omdbapi.com/?s=movie&page={i}&apikey={api_key}'
-            response = requests.get(url)
-            data = response.json()
+        for page in range(1, 11):
+            data = fetch_movies(page, api_key)
 
-            if 'Search' in data:
-                for item in data['Search']:
-                    movie = Movie(
-                        title=item['Title'],
-                        year=item['Year'],
-                        id=item['imdbID'],
-                        type=item['Type'],
-                        poster=item['Poster']
-                    )
-                    movies.append(movie)
+            movies += [create_movie(item) for item in data.get('Search', [])]
 
-        if movies:
-            db.session.bulk_save_objects(movies)
+        db.session.bulk_save_objects(movies or [])
         db.session.commit()
+
+    except OperationalError:
+        print("The table does not exist. Please check your database setup.")

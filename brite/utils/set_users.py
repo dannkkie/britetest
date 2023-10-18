@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash
 
-from ..database_setup import db
+from .database_setup import db
 from ..models.user import User
 
 
@@ -17,9 +17,11 @@ def set_users():
 
     if User.query.first() is None:
 
-        admin = User(username='admin', password_hash=generate_password_hash('admin'), role='admin')
+        admin = User(username='admin', password_hash=generate_password_hash(
+            'admin'), role='admin')
 
-        user = User(username='user', password_hash=generate_password_hash('user'), role='user')
+        user = User(username='user', password_hash=generate_password_hash(
+            'user'), role='user')
 
         db.session.add(admin)
         db.session.add(user)

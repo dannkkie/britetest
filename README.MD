@@ -15,7 +15,7 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  python3 -m install -r brite/requirements.txt
+  python3 -m install -r requirements.txt
 ```
 
 Set environment variables
@@ -48,10 +48,16 @@ Start the server
 
 To run tests, run the following command
 
+You can run single test with the following code for each test
 ```bash
-  python3 -m unittest brites/tests/test_min.python3
+  python3 -m unittest brites/tests/test_movie_service.py
+  ...
+  ...
+```
 
-  python3 -m unittest brites/tests/test_auth
+You can run all the test in the tests dir allat once with follwoing command
+```bash
+  python3 -m unittest discover -s brites/tests
 ```
 
 

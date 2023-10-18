@@ -3,13 +3,14 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-from .database_setup import db, migrate
+from .utils.database_setup import db, migrate
 from .utils.set_users import set_users
 from .services.get_movies import get_movies
-from .routes.main import main_bp
-from .routes.auth import auth_bp
+from .resources.movie import main_bp
+from .resources.auth import auth_bp
 
 load_dotenv()
+
 
 def create_app():
     app = Flask(__name__)
@@ -18,7 +19,6 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
     jwt = JWTManager(app)
-
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -35,12 +35,10 @@ def create_app():
             'message': 'Missing token!'
         }, 401
 
-
     with app.app_context():
         db.create_all()
         get_movies()
         set_users()
-
 
     app.register_blueprint(auth_bp, url_prefix='/api/v1')
     app.register_blueprint(main_bp, url_prefix='/api/v1')
