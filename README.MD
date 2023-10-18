@@ -3,7 +3,7 @@
 Clone the project
 
 ```bash
-  git clone https://github.com/dannkkie/britetest//link-to-project
+  git clone [https://github.com/dannkkie/britetest](https://github.com/dannkkie/britetest)
 ```
 
 Go to the project directory
@@ -42,7 +42,21 @@ Start the server
   flask run
 ```
 
+## Code Changes
 
+After making changes to code 
+
+You can run following commands to format and check style guides. I added pre-commit hooks
+```bash
+  isort .
+  black .
+  flake8 .
+```
+
+You can run all the test in the tests dir allat once with follwoing command
+```bash
+  python3 -m unittest discover -s brites/tests
+```
 
 ## Running Tests
 
@@ -59,8 +73,6 @@ You can run all the test in the tests dir allat once with follwoing command
 ```bash
   python3 -m unittest discover -s brites/tests
 ```
-
-
 
 
 ## Usage/Examples
@@ -90,6 +102,6 @@ Enter the endpoint url and its :params
 
 
 7. POST http://localhost:8000/api/v1/login
-    Thi endpoint accepts a json object as json and return a jwt token
+    This endpoint accepts a json object as json and return a jwt token
 
-    After getting a token it can be used to authrize a logged in user to be able to delete a record.
+    After getting a token it can be used to authorize a logged in user to be able to delete a record.

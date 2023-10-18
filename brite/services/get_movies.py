@@ -1,25 +1,25 @@
 import os
+
 import requests
 from sqlalchemy.exc import OperationalError
 
-
-from brite.utils.database_setup import db
 from brite.models.movie import Movie
+from brite.utils.database_setup import db
 
 
 def fetch_movies(page, api_key):
-    url = f'http://www.omdbapi.com/?s=movie&page={page}&apikey={api_key}'
+    url = f"http://www.omdbapi.com/?s=movie&page={page}&apikey={api_key}"
     response = requests.get(url)
     return response.json()
 
 
 def create_movie(item):
     return Movie(
-        title=item['Title'],
-        year=item['Year'],
-        id=item['imdbID'],
-        type=item['Type'],
-        poster=item['Poster']
+        title=item["Title"],
+        year=item["Year"],
+        id=item["imdbID"],
+        type=item["Type"],
+        poster=item["Poster"],
     )
 
 
@@ -29,14 +29,14 @@ def get_movies():
             print("Movies already exist in the table.")
             return
 
-        api_key = os.getenv('API_KEY')
+        api_key = os.getenv("API_KEY")
         assert api_key is not None, "Set the API_KEY environment variable"
 
         movies = []
         for page in range(1, 11):
             data = fetch_movies(page, api_key)
 
-            movies += [create_movie(item) for item in data.get('Search', [])]
+            movies += [create_movie(item) for item in data.get("Search", [])]
 
         db.session.bulk_save_objects(movies or [])
         db.session.commit()

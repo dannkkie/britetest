@@ -1,0 +1,20 @@
+[flake8]
+per-file-ignores = __init__.py: F401
+
+# set maximum allowed line length
+max-line-length = 89
+
+# set McCabe complexity threshold
+max-complexity = 10
+
+# select errors and warnings to enable which are off by default
+select = E226,E302,E41
+
+# skip errors or warnings
+ignore = E203
+
+# exclude directories or files 
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
+
+# extend-ignore
+extend-ignore = E203
